@@ -1,0 +1,3 @@
+[submodule "IO-Automata"]
+	path = IO-Automata
+	url = git@github.com:nano-o/IO-Automata.git
