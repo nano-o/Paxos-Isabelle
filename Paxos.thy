@@ -1,19 +1,18 @@
-section \<open>The Paxos I/O-Automaton\<close>
-  
+text \<open>We specify the Paxos algorithm and prove it safe using a refinement mapping to a higher-level 
+specification (which we also prove safe)\<close>
+
 theory Paxos
   imports Main "IOAutomata.Simulations" "HOL-Eisbach.Eisbach_Tools"
 begin
 
 text "The theory Simulations is part of the I/O-Automata formalization found at @{url \<open>https://github.com/nano-o/IO-Automata\<close>}"
 
+section \<open>The Paxos I/O-Automaton\<close>
+
 interpretation IOA .
   
 datatype 'v paxos_action =
   Internal | Decision 'v
-  
-text \<open>We specify Paxos following the IVy FOL specification. 
-Rounds are natural numbers, and We use the round @{text "0"} to represent the round @{text "\<bottom>"}.
-We use the type variable @{typ "'n"} for nodes and @{typ "'v"} for values.\<close>
   
 definition paxos_asig where
   "paxos_asig \<equiv> \<lparr> inputs = {}, outputs = {Decision v | v . True}, internals = {Internal} \<rparr>"
