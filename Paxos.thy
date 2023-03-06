@@ -1,7 +1,7 @@
 section \<open>The Paxos I/O-Automaton\<close>
   
 theory Paxos
-  imports Main "./IO-Automata/Simulations" "~~/src/HOL/Eisbach/Eisbach_Tools"
+  imports Main "IOAutomata.Simulations" "HOL-Eisbach.Eisbach_Tools"
 begin
 
 text "The theory Simulations is part of the I/O-Automata formalization found at @{url \<open>https://github.com/nano-o/IO-Automata\<close>}"
