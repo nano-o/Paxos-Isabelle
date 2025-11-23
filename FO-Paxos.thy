@@ -9,7 +9,7 @@ section "Setting up the logical environment"
 sledgehammer_params[timeout=3000]
 
 statespace ('n,'r,'v) vars =
-  vote :: "'n \<Rightarrow> 'r \<Rightarrow> 'v \<Rightarrow> bool"
+  vote :: "'n \<Rightarrow> 'r::linorder \<Rightarrow> 'v \<Rightarrow> bool"
   left_round :: "'n \<Rightarrow> 'r \<Rightarrow> bool"
   proposal :: "'r \<Rightarrow> 'v \<Rightarrow> bool"
   decision :: "'n \<Rightarrow> 'r \<Rightarrow> 'v \<Rightarrow> bool"
@@ -18,26 +18,12 @@ locale test = vars
 
 no_notation Set.member  (\<open>'(\<in>')\<close>)
 no_notation Set.member  (\<open>(\<open>notation=\<open>infix \<in>\<close>\<close>_/ \<in> _)\<close> [51, 51] 50)
-no_notation  ord_class.less_eq  (\<open>'(\<le>')\<close>)
-no_notation  ord_class.less_eq  (\<open>(\<open>notation=\<open>infix \<le>\<close>\<close>_/ \<le> _)\<close>  [51, 51] 50)
-no_notation  ord_class.less  (\<open>'(<')\<close>)
-no_notation  ord_class.less  (\<open>(\<open>notation=\<open>infix <\<close>\<close>_/ < _)\<close>  [51, 51] 50)
 
-locale epr_paxos = vars _ _ _ _ project_HOL_bool_'v_fun_'r_fun_'n_fun + linorder less_eq less
-  for project_HOL_bool_'v_fun_'r_fun_'n_fun :: "_ \<Rightarrow> 'n \<Rightarrow> 'r \<Rightarrow> 'v \<Rightarrow> bool" \<comment> \<open>boilerplate to unify type variables of vars and linorder\<close>
-    and less_eq :: "'r \<Rightarrow> 'r \<Rightarrow> bool" (infix "\<le>" 50)
-    and less (infix "<" 50) +
+locale epr_paxos = vars _ _ _ _ project_HOL_bool_'v_fun_'r_fun_'n_fun
+  for project_HOL_bool_'v_fun_'r_fun_'n_fun :: "_ \<Rightarrow> 'n \<Rightarrow> 'r::linorder \<Rightarrow> 'v \<Rightarrow> bool" + \<comment> \<open>boilerplate to unify type variables\<close>
   fixes quorum_member :: "'n \<Rightarrow> 'q \<Rightarrow> bool" (infix "\<in>" 50)
   assumes "\<And> q1 q2 . \<exists> n . n \<in> q1 \<and> n \<in> q2" \<comment> \<open>quorums intersect\<close>
 begin
-
-text \<open>Not sure why we have to redo this:\<close>
-no_notation Set.member  (\<open>'(\<in>')\<close>)
-no_notation Set.member  (\<open>(\<open>notation=\<open>infix \<in>\<close>\<close>_/ \<in> _)\<close> [51, 51] 50)
-no_notation  ord_class.less_eq  (\<open>'(\<le>')\<close>)
-no_notation  ord_class.less_eq  (\<open>(\<open>notation=\<open>infix \<le>\<close>\<close>_/ \<le> _)\<close>  [51, 51] 50)
-no_notation  ord_class.less  (\<open>'(<')\<close>)
-no_notation  ord_class.less  (\<open>(\<open>notation=\<open>infix <\<close>\<close>_/ < _)\<close>  [51, 51] 50)
 
 section "Specification of the algorithm"
 
@@ -145,10 +131,14 @@ proof -
     using init_def inv4_def by auto
 next
   show "trans_rel c c' q n r maxr v \<and> inv1 c \<and> inv2 c \<and> inv4 c \<Longrightarrow> inv4 c'"
-    unfolding trans_rel_def
+    unfolding trans_rel_def using epr_paxos_axioms unfolding epr_paxos_def vars_def
     apply (auto; simp add: propose_def join_round_def cast_vote_def decide_def inv1_def inv2_def inv4_def)
-    subgoal using epr_paxos.axioms(3) epr_paxos_axioms epr_paxos_axioms_def local.order.order_iff_strict by metis
-     apply fastforce+
+    subgoal unfolding epr_paxos_axioms_def
+      by (metis nle_le not_le_imp_less) 
+    subgoal
+      by (metis (mono_tags, opaque_lifting))
+    subgoal
+      by (metis (no_types, opaque_lifting))
     done
 qed
 
@@ -158,11 +148,9 @@ definition safety where
   "safety c \<equiv> \<forall> n1 n2 r1 r2 v1 v2 . (c\<cdot>decision) n1 r1 v1 \<and> (c\<cdot>decision) n2 r2 v2 \<longrightarrow> v1 = v2"
 
 theorem safety:"inv1 c \<and> inv2 c \<and> inv3 c \<and> inv4 c \<Longrightarrow> safety c"
+  using epr_paxos_axioms unfolding epr_paxos_def epr_paxos_axioms_def vars_def
   apply (auto simp add: inv1_def inv2_def inv3_def inv4_def safety_def)
-  subgoal using epr_paxos.axioms(3) epr_paxos_axioms epr_paxos_axioms_def
-    apply (metis local.less_linear)
-    done
-  done
+  by (metis linorder_cases)
 
 end
 
