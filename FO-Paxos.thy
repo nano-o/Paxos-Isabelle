@@ -14,8 +14,6 @@ statespace ('n,'r,'v) vars =
   proposal :: "'r \<Rightarrow> 'v \<Rightarrow> bool"
   decision :: "'n \<Rightarrow> 'r \<Rightarrow> 'v \<Rightarrow> bool"
 
-locale test = vars
-
 no_notation Set.member  (\<open>'(\<in>')\<close>)
 no_notation Set.member  (\<open>(\<open>notation=\<open>infix \<in>\<close>\<close>_/ \<in> _)\<close> [51, 51] 50)
 
@@ -131,9 +129,9 @@ proof -
     using init_def inv4_def by auto
 next
   show "trans_rel c c' q n r maxr v \<and> inv1 c \<and> inv2 c \<and> inv4 c \<Longrightarrow> inv4 c'"
-    unfolding trans_rel_def using epr_paxos_axioms unfolding epr_paxos_def vars_def
+    unfolding trans_rel_def
     apply (auto; simp add: propose_def join_round_def cast_vote_def decide_def inv1_def inv2_def inv4_def)
-    subgoal unfolding epr_paxos_axioms_def
+    subgoal using epr_paxos_axioms unfolding epr_paxos_def epr_paxos_axioms_def
       by (metis nle_le not_le_imp_less) 
     subgoal
       by (metis (mono_tags, opaque_lifting))
@@ -148,7 +146,7 @@ definition safety where
   "safety c \<equiv> \<forall> n1 n2 r1 r2 v1 v2 . (c\<cdot>decision) n1 r1 v1 \<and> (c\<cdot>decision) n2 r2 v2 \<longrightarrow> v1 = v2"
 
 theorem safety:"inv1 c \<and> inv2 c \<and> inv3 c \<and> inv4 c \<Longrightarrow> safety c"
-  using epr_paxos_axioms unfolding epr_paxos_def epr_paxos_axioms_def vars_def
+  using epr_paxos_axioms unfolding epr_paxos_def epr_paxos_axioms_def
   apply (auto simp add: inv1_def inv2_def inv3_def inv4_def safety_def)
   by (metis linorder_cases)
 
