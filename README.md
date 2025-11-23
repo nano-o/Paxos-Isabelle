@@ -11,8 +11,8 @@ First update the submodule, then:
 - Build with `isabelle build -d IO-Automata/ -D . Paxos`
 - Edit with `isabelle jedit -d IO-Automata/ Paxos.thy`
 
-See [Paxos.thy](https://htmlpreview.github.io/?https://raw.githubusercontent.com/nano-o/Paxos-Isabelle/master/browser_info/Paxos.html)
+See [Paxos.thy](https://htmlpreview.github.io/?https://raw.githubusercontent.com/nano-o/Paxos-Isabelle/master/browser_info/Paxos/Paxos.html)
 
 ## Ivy-like formalization and proof
 
-See [FO-Paxos.thy](https://htmlpreview.github.io/?https://raw.githubusercontent.com/nano-o/Paxos-Isabelle/master/browser_info/FO-Paxos.html)
+See [FO-Paxos.thy](https://htmlpreview.github.io/?https://raw.githubusercontent.com/nano-o/Paxos-Isabelle/master/browser_info/Paxos/FO-Paxos.html)
